@@ -2,16 +2,28 @@
   div
     h1 Renta de Consolas
     //- TablaRentaConsolas(:rentals="rentals")
-    TablaRentaConsolas
+    crud-renta-consolas
 </template>
 
 <script>
+// import https from 'https'
+
 export default {
   // async asyncData(context) {
-  //   const rentals = await context.app.$axios.$get('/consolerentals')
-  //   return {
-  //     rentals: rentals
-  //   }
+  //   // context.app.$axios.defaults.httpsAgent = new https.Agent({ rejectUnauthorized: false })
+  //   return await context.app.$axios.get(
+  //     '/consolerentals',
+  //     {
+  //       httpsAgent: new https.Agent({
+  //         rejectUnauthorized: false
+  //       })
+  //     }
+  //     ).then(r=> {
+  //       console.log(r.data)
+  //       return {
+  //         rentals: r.data
+  //       }
+  //     })
   // }
 }
 </script>

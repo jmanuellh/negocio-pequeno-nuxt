@@ -36,6 +36,7 @@ export default {
   ** https://nuxtjs.org/guide/plugins
   */
   plugins: [
+    // '@/plugins/vuetify.js'
   ],
   /*
   ** Auto import components
@@ -46,7 +47,8 @@ export default {
   ** Nuxt.js dev-modules
   */
   buildModules: [
-    '@nuxtjs/vuetify'
+    '@nuxtjs/vuetify',
+    '@nuxtjs/moment'
   ],
   /*
   ** Nuxt.js modules

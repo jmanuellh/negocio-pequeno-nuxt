@@ -1,17 +1,20 @@
 <template lang="pug">
   div
-    h1 Tabla renta de consolas
-    v-data-table(
+    v-data-table(    
+      :headers="headers"
       :items="rentals"
     )
 </template>
 
 <script>
 export default {
-  // props: ['rentals']
+  // props: ['rentals'],
   data() {
     return {
-      rentals: []
+      headers:[
+        {text: 'Consola', value: 'consoleId'}
+      ],
+      rentals: [{id: 1}]
     }
   },
   created() {
@@ -19,7 +22,9 @@ export default {
   },
   methods: {
     async fillRentals() {
-      this.rentals = await this.$axios.$get('/consolerentals')
+      const rentals = await this.$axios.$get('/consolerentals')
+      console.log('rentals: ', rentals)
+      this.rentals = rentals
     }
   }
 }
