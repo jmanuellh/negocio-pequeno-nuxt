@@ -8,6 +8,9 @@
         v-list-item(to="/renta-consolas")
           v-list-item-content
             v-list-item-title Renta de consolas
+        v-list-item(to="/consolas")
+          v-list-item-content
+            v-list-item-title Consolas
 
     v-app-bar(
       app

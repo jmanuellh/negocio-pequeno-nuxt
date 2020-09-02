@@ -23,7 +23,8 @@
                   )
 
                 v-col(cols="4" class="d-flex justify-center align-center")
-                  modal-add-console(:consoles="consoles" @updatedConsoles="fillConsoles()")
+                  modal-add-console(@updatedConsoles="fillConsoles()")
+                    v-icon(color="blue darken-2") mdi-plus
                 v-col(cols="12")
                   v-text-field(
                     label="Persona"

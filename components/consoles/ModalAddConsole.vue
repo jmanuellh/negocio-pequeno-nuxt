@@ -2,7 +2,7 @@
   v-dialog( v-model="modalAddConsole" max-width="40rem")
     template(v-slot:activator="{on, attrs}")
       v-btn(v-bind="attrs" v-on="on" class="mx-6")
-        v-icon(color="blue darken-2") mdi-plus
+        slot Agregar
     v-card
       v-card-title(class="headline") Agregar Consola
       v-card-text
@@ -22,7 +22,6 @@
 
 <script>
 export default {
-  props: {consoles: Array},
   data() {
     return {
       modalAddConsole: false,
@@ -46,9 +45,6 @@ export default {
     },
     resetNewConsole() {
       this.$refs.formNewConsole.reset()
-    },
-    async fillConsoles() {
-      this.consoles = await this.$axios.$get('/consoles')
     }
   }
 }
