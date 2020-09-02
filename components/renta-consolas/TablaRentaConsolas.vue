@@ -12,7 +12,6 @@
 
 <script>
 export default {
-  // props: ['rentals'],
   data() {
     return {
       saludo: "Hola",
@@ -33,9 +32,7 @@ export default {
   methods: {
     async fillRentals() {
       const rentals = await this.$axios.$get('/consolerentals')
-      console.log('rentals: ', rentals)
       this.rentals = rentals
-      // console.log(this.$moment(rentals[0].startDate).tz(Intl.DateTimeFormat().resolvedOptions().timeZone))
     }
   }
 }

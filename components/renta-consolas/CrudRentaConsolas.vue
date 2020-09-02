@@ -37,11 +37,6 @@
             v-spacer
             v-btn(@click="dialogModificarRenta = false") Cerrar
             v-btn( @click="agregarRenta()") Agregar
-            
-      //- v-btn(
-      //-   @click="agregarRenta()"
-      //-   class="mx-5" 
-      //- ) Agregar
     TablaRentaConsolas(ref="tablaRentaConsolas")
 </template>
 
