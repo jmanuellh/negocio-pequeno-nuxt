@@ -21,16 +21,18 @@
                     item-text="name"
                     item-value="id"
                   )
+
                 v-col(cols="4" class="d-flex justify-center align-center")
                   modal-add-console(:consoles="consoles" @updatedConsoles="fillConsoles()")
-                v-col(cols="12" justify-center )
-                  v-time-picker(v-model="dates.startDate")
-                  v-time-picker(v-model="dates.endDate")
+                v-col(cols="12")
+                  v-text-field(
+                    label="Persona"
+                    v-model="nuevaRenta.customerName"
+                  )
                 v-col(cols="6")
-                  v-text-field(v-model="dates.startDate" @change="cambioFechaInicio" label="Hora incio" type="time")
+                  v-text-field(v-model="dates.startDate" @change="cambioFechaInicio()" label="Hora incio" type="time")
                 v-col(cols="6")
-                  v-text-field(v-model="dates.endDate" label="Hora fin" type="time")
-                    
+                  v-text-field(v-model="dates.endDate" @change="cambioFechaFin()" label="Hora fin" type="time")
           v-card-actions
             v-spacer
             v-btn(@click="dialogModificarRenta = false") Cerrar
@@ -66,23 +68,29 @@ export default {
     }
   },
   created() {
-    
     console.log('moment: ',moment())
   },
   methods: {
     cambioFechaInicio() {
+      const horas = this.dates.startDate.split(":")[0]
+      const minutos = this.dates.startDate.split(":")[1]
+      this.nuevaRenta.startDate = this.$moment().set({'h': horas, 'm': minutos})
+    },
+    cambioFechaFin() {
+      const horas = this.dates.endDate.split(":")[0]
+      const minutos = this.dates.endDate.split(":")[1]
+      this.nuevaRenta.endDate = this.$moment().set({'h': horas, 'm': minutos})
     },
     showModalAddConsole() {
       this.modalAddConsole = true
     },
     async fillConsoles() {
       const consoles = await this.$axios.$get('/consoles')
-      console.log('consoles: ', consoles)
       this.consoles = consoles
     },
     cerrarModalAgregarRenta() {
       this.limpiarModalModificarRenta()
-      this.modalModificarRenta = false
+      this.dialogModificarRenta = false
     },
     limpiarModalModificarRenta() {
       this.nuevaRenta = {
@@ -93,11 +101,12 @@ export default {
       }
     },
     async agregarRenta() {
-      this.$axios.$post('/consoleRentals', this.nuevaRenta).then(() => {
+      console.log(this.nuevaRenta)
+      this.$axios.post('/consoleRentals', this.nuevaRenta).then(() => {
         this.$refs.tablaRentaConsolas.fillRentals()
+        this.dialogModificarRenta = false
+        this.limpiarModalModificarRenta()
       })
-      this.modalModificarRenta = false
-      this.limpiarModalModificarRenta()
     }
   }
 }

@@ -50,6 +50,10 @@ export default {
     '@nuxtjs/vuetify',
     '@nuxtjs/moment'
   ],
+
+  moment: {
+    timezone: true
+  },
   /*
   ** Nuxt.js modules
   */
