@@ -56,6 +56,12 @@ export default {
     async fillRentals() {
       const rentals = await this.$axios.$get('/consolerentals')
       this.rentals = rentals
+    },
+    async editarRentaconsola(id) {
+      this.dialogModificarRenta = false
+      this.$axios.put(`/consolerentals/${id}`).then(() => {
+        this.fillRentals()
+      })
     }
   }
 }
