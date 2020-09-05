@@ -45,7 +45,6 @@ export default {
   },
   created() {
     this.fillRentals()
-    this.saludo = this.$moment()
   },
   methods: {
     mostrarEditarRenta() {
