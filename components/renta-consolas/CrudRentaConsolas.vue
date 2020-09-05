@@ -37,8 +37,8 @@
           v-card-actions
             v-spacer
             v-btn(@click="dialogModificarRenta = false") Cerrar
-            v-btn( @click="agregarRenta()") Agregar
-    TablaRentaConsolas(ref="tablaRentaConsolas")
+            v-btn( @click="agregarRenta(nuevaRenta.id)") Agregar
+    TablaRentaConsolas(ref="tablaRentaConsolas" @mostrar-editar-renta="mostrarModalModificarRenta")
 </template>
 
 <script>
@@ -67,6 +67,18 @@ export default {
     console.log('moment: ',moment())
   },
   methods: {
+    mostrarModalModificarRenta(idRenta) {
+      this.dialogModificarRenta = true
+      this.fillConsoles()
+      this.llenarEditarRenta(idRenta)
+    },
+    async llenarEditarRenta(id) {
+      this.nuevaRenta = await this.$axios.$get(`/consolerentals/${id}`)
+      this.nuevaRenta.startDate = this.$moment.utc(this.nuevaRenta.startDate).local()
+      this.nuevaRenta.endDate = this.$moment.utc(this.nuevaRenta.endDate).local()
+      this.dates.startDate = this.nuevaRenta.startDate.format('HH:mm')
+      this.dates.endDate = this.nuevaRenta.endDate.format('HH:mm')
+    },
     cambioFechaInicio() {
       const horas = this.dates.startDate.split(":")[0]
       const minutos = this.dates.startDate.split(":")[1]
@@ -95,14 +107,23 @@ export default {
         endDate: "",
         customerName: ""
       }
+      for(var prop in this.dates) this.dates[prop] = ""
     },
-    async agregarRenta() {
-      console.log(this.nuevaRenta)
-      this.$axios.post('/consoleRentals', this.nuevaRenta).then(() => {
-        this.$refs.tablaRentaConsolas.fillRentals()
-        this.dialogModificarRenta = false
-        this.limpiarModalModificarRenta()
-      })
+    async agregarRenta(id) {
+      if(id == undefined) {
+        this.$axios.post('/consoleRentals', this.nuevaRenta).then(() => {
+          this.$refs.tablaRentaConsolas.fillRentals()
+          this.dialogModificarRenta = false
+          this.limpiarModalModificarRenta()
+        })
+      // Si trae id se va a actualizar el registro
+      } else {
+        this.$axios.put(`/consoleRentals/${id}`, this.nuevaRenta).then(() => {
+          this.$refs.tablaRentaConsolas.fillRentals()
+          this.dialogModificarRenta = false
+          this.limpiarModalModificarRenta()
+        })
+      }
     }
   }
 }

@@ -16,7 +16,7 @@
               v-bind="attrs"
             )
               v-icon mdi-delete
-              span Eliminar Renta de consola
+              span Eliminar Renta
           v-card()
             v-card-title ¿Eliminar Renta de consola?
             v-card-text ¿Eliminar Renta de consola?
@@ -24,6 +24,7 @@
               v-spacer
               v-btn( @click="modalEliminarRentaConsola = false" ) Cancelar
               v-btn(@click="eliminarRentaConsola(item.id)") Eliminar
+        v-btn(@click="$emit('mostrar-editar-renta', item.id)") Editar renta
 </template>
 
 <script>
@@ -47,6 +48,9 @@ export default {
     this.saludo = this.$moment()
   },
   methods: {
+    mostrarEditarRenta() {
+      this.$emit('mostrarEditarRenta')
+    },
     async eliminarRentaConsola(id) {
       this.modalEliminarRentaConsola = false
       this.$axios.delete(`/consolerentals/${id}`).then(() => {
