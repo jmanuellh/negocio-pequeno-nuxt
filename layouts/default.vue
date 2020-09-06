@@ -11,6 +11,9 @@
         v-list-item(to="/consolas")
           v-list-item-content
             v-list-item-title Consolas
+        v-list-item(to="/internet-rentas")
+          v-list-item-content
+            v-list-item-title Internet Rentas
 
     v-app-bar(
       app
