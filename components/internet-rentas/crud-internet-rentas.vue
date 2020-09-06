@@ -21,6 +21,8 @@
       :headers = "headers",
       :items = "rentas"
     )
+      template(v-slot:item.fechaFin="{item}")
+        span {{$moment.utc(item.fechaFin).local().format('YYYY MMMM DD dddd')}}
       
 </template>
 

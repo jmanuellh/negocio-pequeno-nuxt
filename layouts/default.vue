@@ -14,6 +14,9 @@
         v-list-item(to="/internet-rentas")
           v-list-item-content
             v-list-item-title Internet Rentas
+        v-list-item(to="/movil-dispositivos")
+          v-list-item-content
+            v-list-item-title Movil Dispositivos
 
     v-app-bar(
       app
