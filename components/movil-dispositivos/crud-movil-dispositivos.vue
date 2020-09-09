@@ -1,6 +1,6 @@
 <template lang="pug">
   div
-    v-dialog( v-model="modalDispositivo" )
+    v-dialog( v-model="modalDispositivo" @input="mostrarModalDispositivo" )
       template( v-slot:activator = "{ on, attrs }" )
         v-btn(
           v-on = "on",
@@ -23,6 +23,7 @@
       :items = "dispositivos"
     )
       template(v-slot:item.acciones="{ item }")
+        v-btn( @click="editarDispositivo(item)" ) Editar
         v-dialog(
           v-model="modalEliminarDispositivo"
           :retain-focus="false"
@@ -60,6 +61,18 @@ export default {
     this.llenarDispositivos()
   },
   methods: {
+    mostrarModalDispositivo(mostrar) {
+      // Esto es para que al salir de editar no se quede guardado el id al crear una nueva
+      if (mostrar && this.nuevoDispositivo.id != undefined) {
+        this.nuevoDispositivo.id = undefined
+      }
+    },
+    async editarDispositivo(item) {
+      this.nuevoDispositivo = Object.assign({}, item)
+      // this.nuevoDispositivo = Object.assign({}, this.dispositivos.find(dispositivo => dispositivo.id == id))
+      // this.nuevoDispositivo = await this.$axios.$get(`/movilDispositivos/${id}`)
+      this.modalDispositivo = true
+    },
     limpiarNuevoDispositivo() {
       this.nuevoDispositivo = {
         nombre: "",
@@ -68,9 +81,16 @@ export default {
     },
     async agregarDispositivo() {
       this.modalDispositivo = false
-      this.$axios.post('/movildispositivos', this.nuevoDispositivo).then(() => {
-        this.llenarDispositivos()
-      })
+      if (this.nuevoDispositivo.id == undefined) {
+        this.$axios.post('/movildispositivos', this.nuevoDispositivo).then(() => {
+          this.llenarDispositivos()
+        })        
+      } else {
+        this.$axios.put(`/movildispositivos/${this.nuevoDispositivo.id}`, this.nuevoDispositivo).then(() => {
+          this.llenarDispositivos()
+        })
+      }
+      this.limpiarNuevoDispositivo()
     },
     async llenarDispositivos() {
       this.dispositivos = await this.$axios.$get('/movildispositivos')
