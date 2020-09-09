@@ -1,10 +1,11 @@
 <template lang="pug">
   div
-    v-dialog( v-model="modalNuevaRenta" @input="cambioModalNuevaRenta")
+    v-dialog( v-model="modalNuevaRenta" )
       template(v-slot:activator = "{on, attrs}")
         v-btn(
           v-on="on"
           v-bind="attrs"
+          @click="mostrarModalNuevaRenta()"
         ) Agregar
       v-card
         v-card-title Agregar
@@ -42,24 +43,23 @@
     )
       template(v-slot:item.fechaFin="{item}")
         span {{$moment.utc(item.fechaFin).local().format('YYYY MMMM DD dddd')}}
-      //- template( v-slot:item.acciones = "{ item }" )
-      //-   v-btn( @click="mostrarModalNuevaRenta(item.id)" ) Editar
-      template( v-slot:item.acciones = "{ item }" )
-        v-dialog(
-          v-model="modalEliminarRenta"
-          :retain-focus="false"
-        )
-          template( v-slot:activator = "{ on, attrs }" )
-            v-btn(
-              v-on = "on"
-              v-bind = "attrs"
-            ) Eliminar
-          v-card
-            v-card-title Eliminar
-            v-card-actions
-              v-spacer
-              v-btn( @click="modalEliminarRenta = false" ) Cerrar
-              v-btn( @click="eliminarRenta(item.id)" ) Eliminar
+      template( v-slot:item.acciones = "{ item }" class="d-flex" )
+            v-btn( @click="mostrarModalNuevaRenta(item)" ) Editar
+            v-dialog(
+              v-model="modalEliminarRenta"
+              :retain-focus="false"
+            )
+              template( v-slot:activator = "{ on, attrs }" )
+                v-btn(
+                  v-on = "on"
+                  v-bind = "attrs"
+                ) Eliminar
+              v-card
+                v-card-title Eliminar
+                v-card-actions
+                  v-spacer
+                  v-btn( @click="modalEliminarRenta = false" ) Cerrar
+                  v-btn( @click="eliminarRenta(item.id)" ) Eliminar
 </template>
 
 <script>
@@ -86,6 +86,22 @@ export default {
     this.llenarRentas()
   },
   methods: {
+    cerrarModalNuevaRenta() {
+      this.limpiarNuevaRenta()
+      this.modalNuevaRenta = false
+    },
+    mostrarModalNuevaRenta(item) {
+      this.llenarDispositivos()
+      if (item != undefined) {
+        this.nuevaRenta = Object.assign({}, item)
+        this.fechaFin = this.$moment(this.nuevaRenta.fechaFin).format('YYYY-MM-DD')
+        console.log(this.fechaFin)
+        this.modalNuevaRenta =  true
+      } else {
+        this.nuevaRenta.id = undefined
+        this.nuevaRenta.movilDispositivo = null
+      }
+    },
     async eliminarRenta(id) {
       this.modalEliminarRenta = false
       this.$axios.delete(`/internetRentas/${id}`).then(() => {
@@ -94,11 +110,6 @@ export default {
     },
     cambioFechaFin() {
       this.nuevaRenta.fechaFin = this.$moment(this.fechaFin)
-    },
-    cambioModalNuevaRenta(visible) {
-      if (visible) {
-        this.llenarDispositivos()
-      }
     },
     limpiarNuevaRenta() {
       this.nuevaRenta = {
@@ -115,12 +126,17 @@ export default {
       this.rentas = await this.$axios.$get('/internetRentas')
     },
     async agregarRenta() {
-      console.log(this.nuevaRenta)
       this.modalNuevaRenta = false
-      this.$axios.post('/internetrentas', this.nuevaRenta).then(() => {
-        this.llenarRentas()
-        this.limpiarNuevaRenta()
-      })
+      if (this.nuevaRenta.id == undefined) {
+        this.$axios.post('/internetrentas', this.nuevaRenta).then(() => {
+          this.llenarRentas()
+        })
+      } else {
+        this.$axios.put(`/internetrentas/${this.nuevaRenta.id}`, this.nuevaRenta).then(() => {
+          this.llenarRentas()
+        })
+      }
+      this.limpiarNuevaRenta()
     }
   }
 }
