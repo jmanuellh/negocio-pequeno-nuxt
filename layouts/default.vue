@@ -17,6 +17,9 @@
         v-list-item(to="/movil-dispositivos")
           v-list-item-content
             v-list-item-title Movil Dispositivos
+        v-list-item(to="/productos")
+          v-list-item-content
+            v-list-item-title Productos
 
     v-app-bar(
       app
