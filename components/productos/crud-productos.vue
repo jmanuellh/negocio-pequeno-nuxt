@@ -29,7 +29,10 @@
                   )
             v-card-actions(class="d-flex justify-end" )
               v-btn( @click="closeDialogNewProduct" ) Cerrar
-              v-btn( @click="addProduct" :disabled="!enabledBtnAddProduct") Agregar
+              span(v-if="newProduct.id == undefined")
+                v-btn( @click="addProduct" :disabled="!enabledBtnAddProduct") Agregar
+              span(v-else)
+                v-btn( @click="updateProduct" :disabled="!enabledBtnAddProduct") Actualizar
     v-snackbar(
       v-model="snackbar"
     ) {{ mensajeCamposVacios }}
@@ -44,10 +47,11 @@
       :items = "productos"
     )
       template( v-slot:item.acciones = "{ item }" class="d-flex" )
-            v-btn( @click="showDialogNewProducto(producto)" ) Editar
+            v-btn( @click="editingProduct(item)" ) Editar
             v-dialog(
               v-model="dialogDeleteProduct"
               :retain-focus="false"
+              @input="showDialogDeleteProduct"
             )
               template( v-slot:activator = "{ on, attrs }" )
                 v-btn(
@@ -59,7 +63,10 @@
                 v-card-actions
                   v-spacer
                   v-btn( @click="dialogDeleteProduct = false" ) Cerrar
-                  v-btn( @click="deleteProduct(item.id)" ) Eliminar
+                  v-btn(
+                    @click="deleteProduct(item.id)"
+                    :disabled="!isEnabledBtnDeleteProduct"
+                  ) Eliminar
 </template>
 
 <script>
@@ -80,7 +87,8 @@ export default {
         nombre: "",
         precioVenta: null
       },
-      snackbar: false
+      snackbar: false,
+      isEnabledBtnDeleteProduct: true
     }
   },
   mounted() {
@@ -88,7 +96,15 @@ export default {
   },
   methods: {
     showDialogNewProducto(show) {
+      console.log('show: ', show)
       if(!show) this.cleanNewProduct()
+      else {
+        this.enabledBtnAddProduct = true
+        console.log("entró a else: ", this.enabledBtnAddProduct)
+      }
+    },
+    showDialogDeleteProduct(show) {
+      if (show) this.isEnabledBtnDeleteProduct = true
     },
     closeDialogNewProduct() {
       this.cleanNewProduct()
@@ -117,13 +133,28 @@ export default {
 
       }
     },
+    updateProduct() {
+      this.enabledBtnAddProduct = false
+      this.$axios.put("/product/"+this.newProduct.id, this.newProduct).then(() => {
+        this.getProducts()
+        this.dialogNewProduct = false
+        this.cleanNewProduct()
+      })
+    },
     async getProducts() {
       this.productos = await this.$axios.$get("/product")
     },
     deleteProduct(id) {
-      // this.$axios.delete("/productos", id).then(() => {
-      //   this.getProducts()
-      // })
+      this.isEnabledBtnDeleteProduct = false
+      this.$axios.delete("/product/"+id).then(() => {
+        this.getProducts()
+        this.dialogDeleteProduct = false
+      })
+    },
+    editingProduct(producto) {
+      this.newProduct = producto
+      this.enabledBtnAddProduct = true
+      this.dialogNewProduct = true
     }
   }
 }
