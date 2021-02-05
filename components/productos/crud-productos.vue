@@ -1,6 +1,14 @@
 <template lang="pug">
   div
-    div( class="d-flex justify-end" )
+    div( class="d-flex justify-between" )
+      //- Buscar
+      v-text-field(
+        class="ma-5"
+        label="Buscar producto"
+        append-icon="mdi-magnify"
+        v-model="search.nombre"
+        @keyup.enter="searchProduct"
+      )
       v-dialog(
         v-model="dialogNewProduct"
         @input="showDialogNewProducto"
@@ -33,14 +41,6 @@
                 v-btn( @click="addProduct" :disabled="!enabledBtnAddProduct") Agregar
               span(v-else)
                 v-btn( @click="updateProduct" :disabled="!enabledBtnAddProduct") Actualizar
-    v-snackbar(
-      v-model="snackbar"
-    ) {{ mensajeCamposVacios }}
-      template(v-slot:action="{ attrs }")
-        v-btn(
-          text
-          v-bind="attrs"
-          @click="snackbar = false") Cerrar
     v-data-table(
       style="align-text=right"
       :headers = "headers",
@@ -73,12 +73,23 @@
                     @click="deleteProduct(item.id)"
                     :disabled="!isEnabledBtnDeleteProduct"
                   ) Eliminar
+    v-snackbar(
+      v-model="snackbar"
+    ) {{ mensajeCamposVacios }}
+      template(v-slot:action="{ attrs }")
+        v-btn(
+          text
+          v-bind="attrs"
+          @click="snackbar = false") Cerrar
 </template>
 
 <script>
 export default {
   data() {
     return {
+      search: {
+        nombre: null
+      },
       loadingProduct: true,
       productos: [],
       headers:[
@@ -103,12 +114,8 @@ export default {
   },
   methods: {
     showDialogNewProducto(show) {
-      console.log('show: ', show)
       if(!show) this.cleanNewProduct()
-      else {
-        this.enabledBtnAddProduct = true
-        console.log("entró a else: ", this.enabledBtnAddProduct)
-      }
+      else this.enabledBtnAddProduct = true
     },
     showDialogDeleteProduct(show) {
       if (show) this.isEnabledBtnDeleteProduct = true
@@ -164,6 +171,18 @@ export default {
       this.newProduct = producto
       this.enabledBtnAddProduct = true
       this.dialogNewProduct = true
+    },
+    searchProduct() {
+      this.loadingProduct = true
+      this.$axios.get("/product/search", {nombre: this.search}).then(response => {
+        this.productos = response.data
+        this.loadingProduct = false
+      })
+    },
+    cleanSearch() {
+      this.search = {
+        nombre: null
+      }
     }
   }
 }
