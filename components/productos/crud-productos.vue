@@ -174,7 +174,7 @@ export default {
     },
     searchProduct() {
       this.loadingProduct = true
-      this.$axios.get("/product/search", {nombre: this.search}).then(response => {
+      this.$axios.post("/product/search", {nombre: this.search.nombre}).then(response => {
         this.productos = response.data
         this.loadingProduct = false
       })
