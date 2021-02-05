@@ -45,7 +45,13 @@
       style="align-text=right"
       :headers = "headers",
       :items = "productos"
+      :loading = "loadingProduct"
+      loading-text="Cargando"
     )
+      template( v-slot:item.nombre="{ item }" )
+        span(class="text-h5") {{ item.nombre }}
+      template( v-slot:item.precioVenta="{ item }" )
+        span(class="text-h5") {{ item.precioVenta }}
       template( v-slot:item.acciones = "{ item }" class="d-flex" )
             v-btn( @click="editingProduct(item)" ) Editar
             v-dialog(
@@ -73,6 +79,7 @@
 export default {
   data() {
     return {
+      loadingProduct: true,
       productos: [],
       headers:[
         {text: 'Nombre', value: 'nombre',},
@@ -142,7 +149,9 @@ export default {
       })
     },
     async getProducts() {
+      this.loadingProduct = true
       this.productos = await this.$axios.$get("/product")
+      this.loadingProduct = false
     },
     deleteProduct(id) {
       this.isEnabledBtnDeleteProduct = false
@@ -161,6 +170,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+
 
 
 </style>
