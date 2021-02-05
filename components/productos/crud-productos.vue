@@ -38,21 +38,53 @@
           text
           v-bind="attrs"
           @click="snackbar = false") Cerrar
+    v-data-table(
+      style="align-text=right"
+      :headers = "headers",
+      :items = "productos"
+    )
+      template( v-slot:item.acciones = "{ item }" class="d-flex" )
+            v-btn( @click="showDialogNewProducto(producto)" ) Editar
+            v-dialog(
+              v-model="dialogDeleteProduct"
+              :retain-focus="false"
+            )
+              template( v-slot:activator = "{ on, attrs }" )
+                v-btn(
+                  v-on = "on"
+                  v-bind = "attrs"
+                ) Eliminar
+              v-card
+                v-card-title Eliminar
+                v-card-actions
+                  v-spacer
+                  v-btn( @click="dialogDeleteProduct = false" ) Cerrar
+                  v-btn( @click="deleteProduct(item.id)" ) Eliminar
 </template>
 
 <script>
 export default {
   data() {
     return {
+      productos: [],
+      headers:[
+        {text: 'Nombre', value: 'nombre',},
+        {text: 'Precio', value: 'precioVenta',},
+        {text: 'Acciones', value: 'acciones', sortable:false, align: 'center'}
+      ],
       mensajeCamposVacios: "Debe llenar los campos",
       enabledBtnAddProduct: true,
       dialogNewProduct: false,
+      dialogDeleteProduct: false,
       newProduct: {
         nombre: "",
         precioVenta: null
       },
       snackbar: false
     }
+  },
+  mounted() {
+    this.getProducts()
   },
   methods: {
     showDialogNewProducto(show) {
@@ -85,9 +117,19 @@ export default {
 
       }
     },
-    getProducts() {
-
+    async getProducts() {
+      this.productos = await this.$axios.$get("/product")
+    },
+    deleteProduct(id) {
+      // this.$axios.delete("/productos", id).then(() => {
+      //   this.getProducts()
+      // })
     }
   }
 }
 </script>
+
+<style lang="scss" scoped>
+
+
+</style>
