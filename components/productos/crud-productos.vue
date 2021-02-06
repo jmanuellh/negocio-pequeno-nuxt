@@ -119,6 +119,7 @@ export default {
   },
   mounted() {
     this.getProducts()
+    this.getProductsPaginated()
   },
   methods: {
     showDialogNewProducto(show) {
@@ -194,6 +195,11 @@ export default {
       this.search = {
         nombre: null
       }
+    },
+    getProductsPaginated() {
+      this.$axios.post("/product/paginated", {pageNumber: 2, pageSize: 1}).then(r => {
+        console.log(r.data)
+      }).catch(e => console.log(e))
     }
   }
 }
