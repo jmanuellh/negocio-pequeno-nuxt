@@ -8,7 +8,6 @@
         label="Buscar producto"
         v-model="search.nombre"
         @keyup.enter="searchProduct"
-        clearable="true"
       )
       v-btn(
         @click="searchProduct"
@@ -166,8 +165,11 @@ export default {
     },
     async getProducts() {
       this.loadingProduct = true
-      this.productos = await this.$axios.$get("/product")
-      this.loadingProduct = false
+      try {
+        this.productos = await this.$axios.$get("/product")
+      } finally {
+        this.loadingProduct = false
+      }
     },
     deleteProduct(id) {
       this.isEnabledBtnDeleteProduct = false
