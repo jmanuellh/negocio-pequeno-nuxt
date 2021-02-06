@@ -3,12 +3,20 @@
     div( class="d-flex justify-between" )
       //- Buscar
       v-text-field(
-        class="ma-5"
+        class="my-5"
+        class="ml-5"
         label="Buscar producto"
-        append-icon="mdi-magnify"
         v-model="search.nombre"
         @keyup.enter="searchProduct"
+        clearable="true"
       )
+      v-btn(
+        @click="searchProduct"
+        class="my-5 mr-5"
+      ) Buscar
+        v-icon(class="ml-2" ) mdi-magnify
+
+      //- Agregar
       v-dialog(
         v-model="dialogNewProduct"
         @input="showDialogNewProducto"
@@ -18,6 +26,7 @@
             v-on="on"
             v-bind="attrs"
             class="ma-5"
+            color="primary"
           ) Agregar
         v-card
           v-card-title Agregar Producto
