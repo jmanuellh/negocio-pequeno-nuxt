@@ -49,12 +49,15 @@
                 v-btn( @click="addProduct" :disabled="!enabledBtnAddProduct") Agregar
               span(v-else)
                 v-btn( @click="updateProduct" :disabled="!enabledBtnAddProduct") Actualizar
+    //- Tabla
     v-data-table(
       style="align-text=right"
       :headers = "headers",
       :items = "productos"
       :loading = "loadingProduct"
       loading-text="Cargando"
+      :server-items-length="serverItemsLength"
+      :options.sync="options"
     )
       template( v-slot:item.nombre="{ item }" )
         span(class="text-h5") {{ item.nombre }}
@@ -95,6 +98,15 @@
 export default {
   data() {
     return {
+      serverItemsLength: 0,
+      options: {
+        page: 1,
+        itemsPerPage: 1
+      },
+      pagination: {
+        pageNumber: 1,
+        pageSize: 10
+      },
       search: {
         nombre: null
       },
@@ -119,7 +131,7 @@ export default {
   },
   mounted() {
     this.getProducts()
-    this.getProductsPaginated()
+    // this.getProductsPaginated()
   },
   methods: {
     showDialogNewProducto(show) {
@@ -164,14 +176,14 @@ export default {
         this.cleanNewProduct()
       })
     },
-    async getProducts() {
-      this.loadingProduct = true
-      try {
-        this.productos = await this.$axios.$get("/product")
-      } finally {
-        this.loadingProduct = false
-      }
-    },
+    // async getProducts() {
+    //   this.loadingProduct = true
+    //   try {
+    //     this.productos = await this.$axios.$get("/product")
+    //   } finally {
+    //     this.loadingProduct = false
+    //   }
+    // },
     deleteProduct(id) {
       this.isEnabledBtnDeleteProduct = false
       this.$axios.delete("/product/"+id).then(() => {
@@ -196,9 +208,10 @@ export default {
         nombre: null
       }
     },
-    getProductsPaginated() {
-      this.$axios.post("/product/paginated", {pageNumber: 2, pageSize: 1}).then(r => {
-        console.log(r.data)
+    getProducts() {
+      this.$axios.post("/product/paginated", this.options).then(r => {
+        this.productos = r.data.product
+        this.serverItemsLength = r.data.serverItemsLength
       }).catch(e => console.log(e))
     }
   }
