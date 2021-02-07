@@ -58,6 +58,8 @@
       loading-text="Cargando"
       :server-items-length="serverItemsLength"
       :options.sync="options"
+      @update:options ="getProducts"
+      :footer-props = "footerProps"
     )
       template( v-slot:item.nombre="{ item }" )
         span(class="text-h5") {{ item.nombre }}
@@ -98,20 +100,16 @@
 export default {
   data() {
     return {
+      footerProps: {
+        itemsPerPageOptions: [1,2,-1]
+      },
+      productos: [],
       serverItemsLength: 0,
-      options: {
-        page: 1,
-        itemsPerPage: 1
-      },
-      pagination: {
-        pageNumber: 1,
-        pageSize: 10
-      },
+      options: {},
       search: {
         nombre: null
       },
       loadingProduct: true,
-      productos: [],
       headers:[
         {text: 'Nombre', value: 'nombre',},
         {text: 'Precio', value: 'precioVenta',},
@@ -130,7 +128,7 @@ export default {
     }
   },
   mounted() {
-    this.getProducts()
+    // this.getProducts()
     // this.getProductsPaginated()
   },
   methods: {
@@ -197,11 +195,7 @@ export default {
       this.dialogNewProduct = true
     },
     searchProduct() {
-      this.loadingProduct = true
-      this.$axios.post("/product/search", {nombre: this.search.nombre}).then(response => {
-        this.productos = response.data
-        this.loadingProduct = false
-      })
+      this.getProducts()
     },
     cleanSearch() {
       this.search = {
@@ -209,17 +203,19 @@ export default {
       }
     },
     getProducts() {
-      this.$axios.post("/product/paginated", this.options).then(r => {
-        this.productos = r.data.product
-        this.serverItemsLength = r.data.serverItemsLength
-      }).catch(e => console.log(e))
+      console.log("entró a getProducts", this.options.page)
+      this.loadingProduct = true
+        this.$axios.post("/product/withOptions", Object.assign({product: this.search}, this.options))
+          .then(r => {
+            this.productos = r.data.product
+            this.serverItemsLength = r.data.serverItemsLength
+          })
+          .catch(e => console.log(e))
+          .then(() => this.loadingProduct = false)
     }
   }
 }
 </script>
 
 <style lang="scss" scoped>
-
-
-
 </style>
