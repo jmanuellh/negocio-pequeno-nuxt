@@ -59,7 +59,6 @@
       :server-items-length="serverItemsLength"
       :options.sync="options"
       @update:options ="getProducts"
-      :footer-props = "footerProps"
     )
       template( v-slot:item.nombre="{ item }" )
         span(class="text-h5") {{ item.nombre }}
