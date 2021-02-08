@@ -202,7 +202,6 @@ export default {
       }
     },
     getProducts() {
-      console.log("entró a getProducts", this.options.page)
       this.loadingProduct = true
         this.$axios.post("/product/withOptions", Object.assign({product: this.search}, this.options))
           .then(r => {
