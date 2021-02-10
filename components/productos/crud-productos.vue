@@ -40,8 +40,14 @@
                 v-col(cols="12" lg="6")
                   v-text-field(
                     type="number" 
+                    v-model.number="newProduct.precioCompra"
+                    label="Precio Compra"
+                  )
+                v-col(cols="12" lg="6")
+                  v-text-field(
+                    type="number" 
                     v-model.number="newProduct.precioVenta"
-                    label="Precio"
+                    label="Precio Venta"
                   )
             v-card-actions(class="d-flex justify-end" )
               v-btn( @click="closeDialogNewProduct" ) Cerrar
@@ -62,6 +68,10 @@
     )
       template( v-slot:item.nombre="{ item }" )
         span(class="text-h5") {{ item.nombre }}
+      template( v-slot:item.precioCompra="{ item }" )
+        span(class="text-h5") {{ item.precioCompra }}
+      template( v-slot:item.ganancia="{ item }" )
+        span(class="text-h5") {{ item.precioVenta - item.precioCompra }}
       template( v-slot:item.precioVenta="{ item }" )
         span(class="text-h5") {{ item.precioVenta }}
       template( v-slot:item.acciones = "{ item }" class="d-flex" )
@@ -110,8 +120,10 @@ export default {
       },
       loadingProduct: true,
       headers:[
-        {text: 'Nombre', value: 'nombre',},
-        {text: 'Precio', value: 'precioVenta',},
+        {text: 'Nombre', value: 'nombre'},
+        {text: 'Precio Compra', value: 'precioCompra'},
+        {text: 'Ganancia', value: 'ganancia'},
+        {text: 'Precio Venta', value: 'precioVenta'},
         {text: 'Acciones', value: 'acciones', sortable:false, align: 'center'}
       ],
       mensajeCamposVacios: "Debe llenar los campos",
@@ -120,6 +132,7 @@ export default {
       dialogDeleteProduct: false,
       newProduct: {
         nombre: "",
+        precioCompra: null,
         precioVenta: null
       },
       snackbar: false,
@@ -145,11 +158,12 @@ export default {
     cleanNewProduct() {
       this.newProduct = {
         nombre: "",
+        precioCompra: null,
         precioVenta: null
       }
     },
     addProduct() {
-      if(this.newProduct == "" || this.newProduct.precioVenta == null) {
+      if(this.newProduct == "" || this.newProduct.precioCompra == null || this.newProduct.precioVenta == null) {
         this.snackbar = true
       } else {
         this.enabledBtnAddProduct = false
