@@ -2,11 +2,6 @@ import colors from 'vuetify/es5/util/colors'
 
 export default {
   /*
-  ** Nuxt rendering mode
-  ** See https://nuxtjs.org/api/configuration-mode
-  */
-  mode: 'universal',
-  /*
   ** Nuxt target
   ** See https://nuxtjs.org/api/configuration-target
   */
@@ -53,7 +48,7 @@ export default {
 
   moment: {
     timezone: true,
-    locales: ['es']
+    locales: ['es-mx']
   },
   /*
   ** Nuxt.js modules
@@ -68,7 +63,7 @@ export default {
   ** See https://axios.nuxtjs.org/options
   */
   axios: {
-    baseURL: 'https://localhost:5002/api'
+    baseURL: process.env.BASE_URL || 'https://localhost:5002/api'
   },
   /*
   ** Build configuration
