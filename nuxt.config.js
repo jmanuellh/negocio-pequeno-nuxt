@@ -48,7 +48,7 @@ export default {
 
   moment: {
     timezone: true,
-    locales: ['es']
+    locales: ['es-mx']
   },
   /*
   ** Nuxt.js modules
